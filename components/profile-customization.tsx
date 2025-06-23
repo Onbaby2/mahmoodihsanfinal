@@ -51,7 +51,6 @@ export default function ProfileCustomization({ user, onClose }: ProfileCustomiza
   const [avatarPreview, setAvatarPreview] = useState(user.user_metadata?.avatar_url || "")
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [isCompressing, setIsCompressing] = useState(false)
-  const [originalFile, setOriginalFile] = useState<File | null>(null)
 
   const userInitials =
     user.user_metadata?.firstName && user.user_metadata?.lastName
@@ -98,9 +97,6 @@ export default function ProfileCustomization({ user, onClose }: ProfileCustomiza
         setAvatarPreview(e.target?.result as string)
       }
       reader.readAsDataURL(compressedFile)
-      
-      // Store the compressed file for form submission
-      setOriginalFile(compressedFile)
       
       // Show compression info
       const originalSize = (file.size / (1024 * 1024)).toFixed(2)

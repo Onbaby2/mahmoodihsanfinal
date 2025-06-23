@@ -7,8 +7,6 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "10mb", // Increase body size limit for file uploads
     },
   },
-  // Optimize loading performance
-  swcMinify: true,
   // Enable static optimization where possible
   trailingSlash: false,
   // Optimize images

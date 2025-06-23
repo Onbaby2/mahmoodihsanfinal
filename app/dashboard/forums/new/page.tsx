@@ -38,7 +38,18 @@ function SubmitButton() {
 export default function NewForumPostPage() {
   const router = useRouter()
   const [state, formAction] = useActionState(createForumPost, null)
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<{
+    id: string
+    email: string
+    user_metadata?: {
+      firstName?: string
+      lastName?: string
+      phoneNumber?: string
+      bio?: string
+      location?: string
+      avatar_url?: string
+    }
+  } | null>(null)
   const [loading, setLoading] = useState(true)
 
   const categories = [
@@ -59,7 +70,11 @@ export default function NewForumPostPage() {
         router.push("/auth/login")
         return
       }
-      setUser(user)
+      setUser({
+        id: user.id,
+        email: user.email || "",
+        user_metadata: user.user_metadata
+      })
       setLoading(false)
     }
     getUser()

@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Search, Filter, UserPlus, Users, Ban, AlertTriangle, Phone, Mail, Calendar } from "lucide-react"
+import { Search, Filter, UserPlus, Users, Ban, Phone, Mail, Calendar } from "lucide-react"
 import { banUser } from "@/lib/actions"
 import { Loading } from "@/components/ui/loading"
 import { useToast } from "@/components/ui/toast"
@@ -29,7 +29,18 @@ export default function MembersPage() {
   const [filteredMembers, setFilteredMembers] = useState<Member[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [loading, setLoading] = useState(true)
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<{
+    id: string
+    email: string
+    user_metadata?: {
+      firstName?: string
+      lastName?: string
+      phoneNumber?: string
+      bio?: string
+      location?: string
+      avatar_url?: string
+    }
+  } | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
   const [banningUserId, setBanningUserId] = useState<string | null>(null)
   const [showBanConfirm, setShowBanConfirm] = useState<string | null>(null)
@@ -48,7 +59,11 @@ export default function MembersPage() {
         return
       }
       
-      setUser(user)
+      setUser({
+        id: user.id,
+        email: user.email || "",
+        user_metadata: user.user_metadata
+      })
       setIsAdmin(user.email === "sadiq.rasheed@outlook.com")
 
       // Fetch all users from auth.users to get avatar URLs
@@ -60,7 +75,16 @@ export default function MembersPage() {
       }
 
       // Transform users into member format
-      const membersData = users?.map((userData: any) => {
+      const membersData = users?.map((userData: {
+        id: string
+        email?: string
+        user_metadata?: {
+          firstName?: string
+          lastName?: string
+          phoneNumber?: string
+        }
+        created_at: string
+      }) => {
         const firstName = userData.user_metadata?.firstName || ""
         const lastName = userData.user_metadata?.lastName || ""
         const fullName = `${firstName} ${lastName}`.trim() || userData.email?.split("@")[0] || "Unknown User"

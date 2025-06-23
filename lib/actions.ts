@@ -5,8 +5,14 @@ import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
 
+interface ActionState {
+  success?: string | boolean
+  error?: string
+  postId?: string
+}
+
 // Update the signIn function to handle redirects properly
-export async function signIn(prevState: any, formData: FormData) {
+export async function signIn(prevState: ActionState | null, formData: FormData): Promise<ActionState> {
   // Check if formData is valid
   if (!formData) {
     return { error: "Form data is missing" }
@@ -46,7 +52,7 @@ export async function signIn(prevState: any, formData: FormData) {
 }
 
 // Update the signUp function to handle email confirmation properly
-export async function signUp(prevState: any, formData: FormData) {
+export async function signUp(prevState: ActionState | null, formData: FormData): Promise<ActionState> {
   // Check if formData is valid
   if (!formData) {
     return { error: "Form data is missing" }
@@ -163,7 +169,7 @@ export async function createDevUser() {
 }
 
 // Function to update user profile
-export async function updateUserProfile(prevState: any, formData: FormData) {
+export async function updateUserProfile(prevState: ActionState | null, formData: FormData): Promise<ActionState> {
   const cookieStore = cookies()
   const supabase = createServerActionClient({ cookies: () => cookieStore })
 
@@ -238,7 +244,7 @@ export async function updateUserProfile(prevState: any, formData: FormData) {
 }
 
 // Function to create a new forum post
-export async function createForumPost(prevState: any, formData: FormData) {
+export async function createForumPost(prevState: ActionState | null, formData: FormData): Promise<ActionState> {
   const cookieStore = cookies()
   const supabase = createServerActionClient({ cookies: () => cookieStore })
 
@@ -363,7 +369,7 @@ export async function togglePostLike(postId: string) {
 }
 
 // Function to add a comment to a post
-export async function addPostComment(prevState: any, formData: FormData) {
+export async function addPostComment(prevState: ActionState | null, formData: FormData): Promise<ActionState> {
   const cookieStore = cookies()
   const supabase = createServerActionClient({ cookies: () => cookieStore })
 
@@ -415,7 +421,7 @@ export async function addPostComment(prevState: any, formData: FormData) {
 }
 
 // Function to add a reply to a comment
-export async function addCommentReply(prevState: any, formData: FormData) {
+export async function addCommentReply(prevState: ActionState | null, formData: FormData): Promise<ActionState> {
   const cookieStore = cookies()
   const supabase = createServerActionClient({ cookies: () => cookieStore })
 

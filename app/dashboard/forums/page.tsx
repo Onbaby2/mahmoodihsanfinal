@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Plus, Search, Filter, Heart, MessageCircle, Eye, Pin } from "lucide-react"
+import { Plus, Search, Filter, MessageCircle, Eye, Pin } from "lucide-react"
 import Link from "next/link"
 import ForumFilterOverlay from "@/components/forum-filter-overlay"
 import ForumPostDetail from "@/components/forum-post-detail"
@@ -28,11 +28,21 @@ interface ForumPost {
   category: string
   categoryColor: string
   time: string
-  replies: any[]
+  replies: ForumReply[]
   views: number
   likes: number
   isPinned: boolean
   isLiked?: boolean
+}
+
+interface ForumReply {
+  id: string
+  content: string
+  author_id: string
+  author_name: string
+  created_at: string
+  parent_id?: string
+  replies?: ForumReply[]
 }
 
 interface Category {
@@ -50,7 +60,18 @@ export default function ForumsPage() {
   const [selectedPost, setSelectedPost] = useState<ForumPost | null>(null)
   const [currentUserId, setCurrentUserId] = useState<string>("")
   const [loading, setLoading] = useState(true)
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<{
+    id: string
+    email: string
+    user_metadata?: {
+      firstName?: string
+      lastName?: string
+      phoneNumber?: string
+      bio?: string
+      location?: string
+      avatar_url?: string
+    }
+  } | null>(null)
   const [likeStates, setLikeStates] = useState<Record<string, { isLiked: boolean; likes: number }>>({})
 
   useEffect(() => {
@@ -65,7 +86,11 @@ export default function ForumsPage() {
       } = await supabase.auth.getUser()
       if (user) {
         setCurrentUserId(user.id)
-        setUser(user)
+        setUser({
+          id: user.id,
+          email: user.email || "",
+          user_metadata: user.user_metadata
+        })
       }
 
       // Fetch forum posts
@@ -79,9 +104,6 @@ export default function ForumsPage() {
         return
       }
 
-      // Get unique author IDs to fetch user data
-      const authorIds = [...new Set(posts?.map(post => post.author_id) || [])]
-      
       // Fetch user data for avatars
       const { data: usersResponse, error: usersError } = await supabase.auth.admin.listUsers()
       if (usersError) {
@@ -90,7 +112,14 @@ export default function ForumsPage() {
 
       // Create a map of user data by ID
       const userMap = new Map()
-      usersResponse?.users?.forEach((userData: any) => {
+      usersResponse?.users?.forEach((userData: {
+        id: string
+        user_metadata?: {
+          firstName?: string
+          lastName?: string
+          avatar_url?: string
+        }
+      }) => {
         userMap.set(userData.id, userData)
       })
 
@@ -107,20 +136,20 @@ export default function ForumsPage() {
         if (!acc[reply.post_id]) acc[reply.post_id] = []
         acc[reply.post_id].push(reply)
         return acc
-      }, {} as Record<string, any[]>) || {}
+      }, {} as Record<string, ForumReply[]>) || {}
 
       // Structure comments hierarchically (top-level comments and their replies)
       const structuredRepliesByPost = Object.keys(repliesByPost).reduce((acc, postId) => {
         const allReplies = repliesByPost[postId]
-        const topLevelComments = allReplies.filter((reply: any) => !reply.parent_id)
-        const nestedReplies = allReplies.filter((reply: any) => reply.parent_id)
+        const topLevelComments = allReplies.filter((reply: ForumReply) => !reply.parent_id)
+        const nestedReplies = allReplies.filter((reply: ForumReply) => reply.parent_id)
 
         // Add replies to their parent comments
-        const structuredComments = topLevelComments.map((comment: any) => ({
+        const structuredComments = topLevelComments.map((comment: ForumReply) => ({
           ...comment,
           replies: nestedReplies
-            .filter((reply: any) => reply.parent_id === comment.id)
-            .map((reply: any) => ({
+            .filter((reply: ForumReply) => reply.parent_id === comment.id)
+            .map((reply: ForumReply) => ({
               ...reply,
               author_id: reply.author_id // Ensure author_id is included
             }))
@@ -128,10 +157,10 @@ export default function ForumsPage() {
 
         acc[postId] = structuredComments
         return acc
-      }, {} as Record<string, any[]>)
+      }, {} as Record<string, ForumReply[]>)
 
       // Fetch user likes
-      let userLikes: any[] = []
+      let userLikes: { post_id: string }[] = []
       if (user) {
         const { data: likes } = await supabase
           .from("post_likes")
@@ -216,7 +245,7 @@ export default function ForumsPage() {
     setSelectedPost(null)
   }
 
-  const handleCommentAdded = (postId: string, newComment: any) => {
+  const handleCommentAdded = (postId: string, newComment: ForumReply) => {
     // Update the post's replies count in the forum list
     setForumPosts(prevPosts => 
       prevPosts.map(post => 

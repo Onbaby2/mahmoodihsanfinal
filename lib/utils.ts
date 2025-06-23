@@ -95,8 +95,20 @@ export function validateImageType(file: File): { isValid: boolean; error?: strin
   return { isValid: true }
 }
 
+interface UserData {
+  user_metadata?: {
+    firstName?: string
+    lastName?: string
+    avatar_url?: string
+  }
+  first_name?: string
+  last_name?: string
+  avatar_url?: string
+  email?: string
+}
+
 // Get user avatar URL from user metadata or profile
-export function getUserAvatarUrl(user: any): string {
+export function getUserAvatarUrl(user: UserData): string {
   // First check user metadata (where avatars are stored after upload)
   if (user?.user_metadata?.avatar_url) {
     return user.user_metadata.avatar_url
@@ -112,7 +124,7 @@ export function getUserAvatarUrl(user: any): string {
 }
 
 // Get user initials for avatar fallback
-export function getUserInitials(user: any): string {
+export function getUserInitials(user: UserData): string {
   const firstName = user?.user_metadata?.firstName || user?.first_name || ""
   const lastName = user?.user_metadata?.lastName || user?.last_name || ""
   const email = user?.email || ""

@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react"
 import { useActionState } from "react"
 import { useFormStatus } from "react-dom"
-import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"

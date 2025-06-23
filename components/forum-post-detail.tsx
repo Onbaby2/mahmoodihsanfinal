@@ -1,9 +1,8 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import { useActionState } from "react"
 import { useFormStatus } from "react-dom"
-import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
@@ -13,6 +12,16 @@ import { togglePostLike, addPostComment, incrementPostViews, deleteForumPost, ba
 import CommentItem from "@/components/comment-item"
 import AnimatedHeart from "@/components/animated-heart"
 import { supabase } from "@/lib/supabase/client"
+
+interface ForumReply {
+  id: string
+  content: string
+  author_id?: string
+  author_name: string
+  created_at: string
+  parent_id?: string | null
+  replies?: ForumReply[]
+}
 
 interface ForumPost {
   id: string
@@ -25,7 +34,7 @@ interface ForumPost {
   category: string
   categoryColor: string
   time: string
-  replies: any[]
+  replies: ForumReply[]
   views: number
   likes: number
   isPinned: boolean
@@ -37,7 +46,7 @@ interface ForumPostDetailProps {
   onClose: () => void
   currentUserId: string
   onPostDeleted: (deletedPostId: string) => void
-  onCommentAdded?: (postId: string, newComment: any) => void
+  onCommentAdded?: (postId: string, newComment: ForumReply) => void
 }
 
 function CommentSubmitButton() {
@@ -172,7 +181,7 @@ export default function ForumPostDetail({ post, onClose, currentUserId, onPostDe
     }
   }
 
-  const handleReplyAdded = (parentId: string, newReply: any) => {
+  const handleReplyAdded = (parentId: string, newReply: ForumReply) => {
     // Add the reply to the appropriate comment
     setComments(prev => 
       prev.map(comment => {
