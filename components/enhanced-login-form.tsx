@@ -5,7 +5,7 @@ import { useFormStatus } from "react-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Loader2, Eye, EyeOff, Heart, Users, Shield, Phone } from "lucide-react"
+import { Loader2, Eye, EyeOff, Heart, Users, Shield } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
@@ -154,7 +154,7 @@ export default function EnhancedLoginForm() {
         <SubmitButton />
 
         <div className="text-center text-muted-foreground">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link href="/auth/sign-up" className="text-primary hover:underline font-medium">
             Sign up
           </Link>

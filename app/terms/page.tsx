@@ -110,7 +110,7 @@ export default function TermsOfServicePage() {
               <div>
                 <h3 className="font-semibold text-foreground mb-2">Our Promise</h3>
                 <p className="text-muted-foreground">
-                  We're committed to creating a safe, supportive environment guided by Islamic principles. These terms
+                  We&apos;re committed to creating a safe, supportive environment guided by Islamic principles. These terms
                   protect our community and help us serve our mission of strengthening families.
                 </p>
               </div>

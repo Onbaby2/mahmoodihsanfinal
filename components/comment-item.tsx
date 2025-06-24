@@ -67,9 +67,7 @@ export default function CommentItem({ comment, postId, currentUserId, onReplyAdd
   const [replyState, replyAction] = useActionState(addCommentReply, null)
   const [isDeleting, setIsDeleting] = useState(false)
   const [deleteState, setDeleteState] = useState<{ success?: string; error?: string } | null>(null)
-  const [showMenu, setShowMenu] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
-  const [banningUserId, setBanningUserId] = useState<string | null>(null)
 
   // Check if current user is admin
   useEffect(() => {
@@ -171,8 +169,6 @@ export default function CommentItem({ comment, postId, currentUserId, onReplyAdd
       return
     }
 
-    setBanningUserId(userId)
-
     try {
       const result = await banUser(userId)
       
@@ -186,8 +182,6 @@ export default function CommentItem({ comment, postId, currentUserId, onReplyAdd
     } catch (error) {
       console.error("Error banning user:", error)
       alert("An unexpected error occurred while banning the user.")
-    } finally {
-      setBanningUserId(null)
     }
   }
 

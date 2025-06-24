@@ -30,7 +30,7 @@ export async function signIn(prevState: ActionState | null, formData: FormData):
   const supabase = createServerActionClient({ cookies: () => cookieStore })
 
   try {
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email: email.toString(),
       password: password.toString(),
     })
