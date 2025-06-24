@@ -49,7 +49,7 @@ interface DashboardLayoutProps {
   children: React.ReactNode
   user: {
     id: string
-    email: string
+    email?: string
     user_metadata?: {
       firstName?: string
       lastName?: string
@@ -69,12 +69,12 @@ export default function DashboardLayout({ children, user }: DashboardLayoutProps
   const userInitials =
     user.user_metadata?.firstName && user.user_metadata?.lastName
       ? `${user.user_metadata.firstName[0]}${user.user_metadata.lastName[0]}`
-      : user.email[0].toUpperCase()
+      : user.email?.[0].toUpperCase() ?? ""
 
   const userName =
     user.user_metadata?.firstName && user.user_metadata?.lastName
       ? `${user.user_metadata.firstName} ${user.user_metadata.lastName}`
-      : user.email
+      : user.email ?? ""
 
   return (
     <div className="min-h-screen bg-background">
@@ -175,7 +175,7 @@ export default function DashboardLayout({ children, user }: DashboardLayoutProps
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none text-foreground">{userName}</p>
-                      <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                      <p className="text-xs leading-none text-muted-foreground">{user.email ?? "No email provided"}</p>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />

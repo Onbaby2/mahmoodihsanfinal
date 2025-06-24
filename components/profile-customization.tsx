@@ -33,7 +33,7 @@ function SubmitButton() {
 interface ProfileCustomizationProps {
   user: {
     id: string
-    email: string
+    email?: string
     user_metadata?: {
       firstName?: string
       lastName?: string
@@ -55,7 +55,7 @@ export default function ProfileCustomization({ user, onClose }: ProfileCustomiza
   const userInitials =
     user.user_metadata?.firstName && user.user_metadata?.lastName
       ? `${user.user_metadata.firstName[0]}${user.user_metadata.lastName[0]}`
-      : user.email[0].toUpperCase()
+      : user.email?.[0].toUpperCase() ?? ""
 
   const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -219,7 +219,7 @@ export default function ProfileCustomization({ user, onClose }: ProfileCustomiza
             id="email"
             name="email"
             type="email"
-            value={user.email}
+            value={user.email ?? ""}
             disabled
             className="bg-muted border-border text-muted-foreground"
           />
