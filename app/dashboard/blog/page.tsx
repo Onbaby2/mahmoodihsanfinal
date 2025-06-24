@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Search, Clock, Eye, Heart, MessageCircle, Plus, ArrowRight } from "lucide-react"
+import Image from "next/image"
 
 export default async function BlogPage() {
   const supabase = createClient()
@@ -158,8 +159,14 @@ export default async function BlogPage() {
     return `${Math.floor(diffDays / 30)} months ago`
   }
 
+  const userForLayout = {
+    id: user.id,
+    email: user.email || "",
+    user_metadata: user.user_metadata,
+  }
+
   return (
-    <DashboardLayout user={user}>
+    <DashboardLayout user={userForLayout}>
       <div className="max-w-6xl mx-auto">
         {/* Header Section */}
         <div className="mb-16">
@@ -208,9 +215,11 @@ export default async function BlogPage() {
                   className="bg-card border-border overflow-hidden hover:shadow-lg transition-all duration-300 group"
                 >
                   <div className="relative overflow-hidden">
-                    <img
+                    <Image
                       src={post.image || "/placeholder.svg"}
                       alt={post.title}
+                      width={800}
+                      height={400}
                       className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute top-6 left-6">
@@ -281,78 +290,76 @@ export default async function BlogPage() {
             {regularPosts.map((post) => (
               <Card
                 key={post.id}
-                className="bg-card border-border overflow-hidden hover:shadow-lg transition-all duration-300 group"
+                className="bg-card border-border overflow-hidden hover:shadow-lg transition-all duration-300 group flex flex-col"
               >
-                <CardContent className="p-0">
-                  <div className="grid grid-cols-1 lg:grid-cols-5 gap-0">
-                    <div className="lg:col-span-2 relative overflow-hidden">
-                      <img
-                        src={post.image || "/placeholder.svg"}
-                        alt={post.title}
-                        className="w-full h-64 lg:h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
+                <div className="relative overflow-hidden">
+                  <Image
+                    src={post.image || "/placeholder.svg"}
+                    alt={post.title}
+                    width={400}
+                    height={250}
+                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+
+                <CardContent className="p-6 flex-grow flex flex-col">
+                  <div className="flex-grow">
+                    <div className="flex items-center space-x-4">
+                      <Badge variant="secondary" className="px-3 py-1 text-sm">
+                        {post.category}
+                      </Badge>
+                      <span className="text-sm text-muted-foreground">{formatRelativeTime(post.publishedAt)}</span>
                     </div>
 
-                    <div className="lg:col-span-3 p-8 lg:p-12 flex flex-col justify-center">
-                      <div className="space-y-6">
-                        <div className="flex items-center space-x-4">
-                          <Badge variant="secondary" className="px-3 py-1 text-sm">
-                            {post.category}
-                          </Badge>
-                          <span className="text-sm text-muted-foreground">{formatRelativeTime(post.publishedAt)}</span>
-                        </div>
+                    <div className="space-y-4">
+                      <h3 className="text-2xl lg:text-3xl font-bold text-card-foreground leading-tight line-clamp-2">
+                        {post.title}
+                      </h3>
 
-                        <div className="space-y-4">
-                          <h3 className="text-2xl lg:text-3xl font-bold text-card-foreground leading-tight line-clamp-2">
-                            {post.title}
-                          </h3>
+                      <p className="text-muted-foreground leading-relaxed line-clamp-3 text-lg">{post.excerpt}</p>
+                    </div>
 
-                          <p className="text-muted-foreground leading-relaxed line-clamp-3 text-lg">{post.excerpt}</p>
-                        </div>
-
-                        <div className="flex items-center justify-between pt-6 border-t border-border">
-                          <div className="flex items-center space-x-3">
-                            <Avatar className="h-10 w-10">
-                              <AvatarImage src={post.author.avatar || "/placeholder.svg"} alt={post.author.name} />
-                              <AvatarFallback className="bg-primary/20 text-primary font-medium">
-                                {post.author.name
-                                  .split(" ")
-                                  .map((n) => n[0])
-                                  .join("")}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <p className="font-medium text-card-foreground">{post.author.name}</p>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center space-x-6 text-sm text-muted-foreground">
-                            <div className="flex items-center space-x-2">
-                              <Clock className="h-4 w-4" />
-                              <span>{post.readTime}m</span>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <Eye className="h-4 w-4" />
-                              <span>{post.views}</span>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <Heart className="h-4 w-4" />
-                              <span>{post.likes}</span>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <MessageCircle className="h-4 w-4" />
-                              <span>{post.comments}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="pt-4">
-                          <Button variant="ghost" className="text-primary hover:text-primary/80 p-0 h-auto font-medium">
-                            Read Full Article
-                            <ArrowRight className="ml-2 h-4 w-4" />
-                          </Button>
+                    <div className="flex items-center justify-between pt-6 border-t border-border">
+                      <div className="flex items-center space-x-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={post.author.avatar || "/placeholder.svg"} alt={post.author.name} />
+                          <AvatarFallback className="bg-primary/20 text-primary font-medium">
+                            {post.author.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium text-card-foreground">{post.author.name}</p>
                         </div>
                       </div>
+
+                      <div className="flex items-center space-x-6 text-sm text-muted-foreground">
+                        <div className="flex items-center space-x-2">
+                          <Clock className="h-4 w-4" />
+                          <span>{post.readTime}m</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Eye className="h-4 w-4" />
+                          <span>{post.views}</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Heart className="h-4 w-4" />
+                          <span>{post.likes}</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <MessageCircle className="h-4 w-4" />
+                          <span>{post.comments}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-4">
+                      <Button variant="ghost" className="text-primary hover:text-primary/80 p-0 h-auto font-medium">
+                        Read Full Article
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
                 </CardContent>

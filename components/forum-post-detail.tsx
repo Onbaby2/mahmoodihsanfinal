@@ -126,7 +126,7 @@ export default function ForumPostDetail({ post, onClose, currentUserId, onPostDe
         onCommentAdded(post.id, newComment)
       }
     }
-  }, [commentState?.success])
+  }, [commentState?.success, commentContent, currentUserId, onCommentAdded, post.id])
 
   const handleLike = async () => {
     // Optimistic update - update UI immediately

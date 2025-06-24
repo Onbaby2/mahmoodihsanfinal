@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Upload, Search, Filter, Heart, Download, Share, Calendar, User } from "lucide-react"
+import Image from "next/image"
 
 export default async function GalleryPage() {
   const supabase = createClient()
@@ -82,8 +83,14 @@ export default async function GalleryPage() {
 
   const categories = ["All", "Events", "Environment", "Education", "Medical Aid", "Islamic Studies", "Community"]
 
+  const userForLayout = {
+    id: user.id,
+    email: user.email || "",
+    user_metadata: user.user_metadata,
+  }
+
   return (
-    <DashboardLayout user={user}>
+    <DashboardLayout user={userForLayout}>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -130,9 +137,11 @@ export default async function GalleryPage() {
               className="bg-card border-border overflow-hidden group hover:border-primary/30 transition-colors"
             >
               <div className="relative">
-                <img
+                <Image
                   src={item.image || "/placeholder.svg"}
                   alt={item.title}
+                  width={400}
+                  height={300}
                   className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
