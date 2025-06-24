@@ -27,3 +27,31 @@ export interface SignUpFormData {
   agreeToTerms: boolean
   agreeToPrivacy: boolean
 }
+
+export interface ForumReply {
+  id: string;
+  content: string;
+  author_id?: string;
+  author_name: string;
+  created_at: string;
+  parent_id?: string | null;
+  replies?: ForumReply[];
+}
+
+export interface ForumPost {
+  id: string;
+  title: string;
+  content: string;
+  author: string;
+  author_id: string;
+  authorInitials: string;
+  authorAvatar: string;
+  category: string;
+  categoryColor: string;
+  time: string;
+  replies: ForumReply[];
+  views: number;
+  likes: number;
+  isPinned: boolean;
+  isLiked?: boolean;
+}

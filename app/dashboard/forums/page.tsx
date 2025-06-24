@@ -16,34 +16,7 @@ import { Loading } from "@/components/ui/loading"
 import AnimatedHeart from "@/components/animated-heart"
 import { togglePostLike } from "@/lib/actions"
 import { getUserAvatarUrl, getUserInitials } from "@/lib/utils"
-
-interface ForumPost {
-  id: string
-  title: string
-  content: string
-  author: string
-  author_id: string
-  authorInitials: string
-  authorAvatar: string
-  category: string
-  categoryColor: string
-  time: string
-  replies: ForumReply[]
-  views: number
-  likes: number
-  isPinned: boolean
-  isLiked?: boolean
-}
-
-interface ForumReply {
-  id: string
-  content: string
-  author_id: string
-  author_name: string
-  created_at: string
-  parent_id?: string
-  replies?: ForumReply[]
-}
+import { ForumPost, ForumReply } from "@/lib/types"
 
 interface Category {
   name: string
